@@ -55,7 +55,7 @@ Audit Log
 
 ## Project Status
 
-🚧 Currently under development.
+Currently under development.
 
 ## Author
 
