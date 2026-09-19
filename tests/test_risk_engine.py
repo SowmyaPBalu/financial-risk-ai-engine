@@ -9,3 +9,7 @@ def test_calculate_risk_score():
 def test_calculate_risk_score_rejects_zero_income():
     with pytest.raises(ValueError):
         calculate_risk_score(0, 30000)
+
+def test_calculate_risk_score_rejects_negative_debt():
+    with pytest.raises(ValueError):
+        calculate_risk_score(100000, -30000)
