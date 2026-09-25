@@ -110,4 +110,3 @@ applicant7 = LoanApplicant(200000, 50000, 1000000)
 
 print(f"test_debt_ratio: {applicant7.debt_ratio()}")
 print(f"test_override: {applicant7.risk_decision()}")
-
