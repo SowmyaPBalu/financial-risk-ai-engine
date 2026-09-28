@@ -222,3 +222,188 @@ print(Applicant.is_valid_income(100000)) #calling the static method
 default_applicant = Applicant.create_default()# calling the class method
 print(default_applicant)
 print(applicant) # calling the instance of self method
+
+# MINI EXERCISE
+@dataclass
+class LoanApplicant():
+    name:str
+    income:float
+    debt:float
+    loan_amount:float
+
+    loan_type = "General"
+
+# 1. Validation using __post_init__
+    def __post_init__(self):
+        if self.income <0.0:
+            raise ValueError("Income must be greater than 0")
+        if self.debt <0.0:
+            raise ValueError("Debt cannot be negative")
+        if self.loan_amount <0.0:
+            raise ValueError("Loan amoount cannot be negative")
+
+# Property 
+    @property
+    def ratio(self) -> float: 
+        return self.debt / self.income
+
+# Static method
+    @staticmethod
+    def is_valid_income(income) -> bool:
+        return income > 0
+
+# class method
+    @classmethod
+    def create_default(cls):
+        return cls("Shiksha",100000.0, 30000.0, 0.0)
+
+applicant = LoanApplicant("Shiksha",100000.0,30000.0,200000.0)
+applicant1 = LoanApplicant("Shiksha",-1.0,30000.0,200000.0)
+applicant2 = LoanApplicant("Shiksha",100000.0,-9.0,200000.0)
+applicant3 = LoanApplicant("Shiksha",100000.0,30000.0,-798.0)
+LoanApplicant.is_valid_income(189879)
+default_applicant = LoanApplicant.create_default()# calling the class method
+print(default_applicant)
+print(LoanApplicant.ratio)
+
+# 28/SEP/2026
+# DECORATORS
+def calculate_risk():
+    return "LOW_RISK"
+
+my_function = calculate_risk
+print(my_function())
+
+# Passing a function into a function
+def calculate_risk():
+    return "LOW_RISK"
+
+def execute_function(func):
+    return func()
+
+result = execute_function(calculate_risk)
+print(result)
+
+# skeleton for decorator
+def calculate_risk():
+    return "LOW_RISK"
+
+def log_execution(func):
+
+    def wrapper():
+        print("Function started")
+        result = func()
+        print("Function completed")
+        return result
+    return wrapper
+
+calculate_risk = log_execution(calculate_risk) #decorator piece
+result = calculate_risk()
+print(result)
+
+# ACTUAL Decorator
+def log_execution(func):
+
+    def wrapper():
+        print("Function started")
+        result = func()
+        print("Function completed")
+        return result
+    return wrapper
+
+@log_execution #decorator will do calculate_risk = log_execution(calculate_risk)
+def calculate_risk():
+    return "LOW_RISK"
+
+result = calculate_risk()
+print(result)
+
+# args &kwargs
+def log_execution(func):
+
+    def wrapper(*args):
+        print("Function started")
+        result = func(*args)
+        print("Function completed")
+        return result
+    return wrapper
+
+@log_execution
+def calculate_risk_score(income, debt):
+    return debt / income
+
+result = calculate_risk_score(100000, 30000)
+print(result)
+
+# positional arguments -> tuple
+def test(*args):
+    print(args)
+test(100000,30000)
+
+# Key word arguments -> dictionary
+def test(**kwargs):
+    print(kwargs)
+test(income=100000, debt=30000)
+
+# Usage of args & kwargs in decorators
+def log_execution(func):
+
+    def wrapper(*args, **kwargs):
+        print("Function started")
+        result = func(*args, **kwargs)
+        print("Function completed")
+        return result
+    return wrapper
+
+@log_execution
+def calculate_risk_score(income, debt):
+    return debt / income
+
+calculate_risk_score(100000, 30000)
+calculate_risk_score(income=100000, debt=30000)
+
+# @wraps
+from functools import wraps
+
+def log_execution(func):
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print("Function started")
+        result = func(*args, **kwargs)
+        print("Function completed")
+        return result
+
+    return wrapper
+
+@log_execution
+def calculate_risk_score(income, debt):
+    return debt / income
+
+print(calculate_risk_score.__name__)
+help(calculate_risk_score)
+
+# Good ex
+def a_decorator(func):
+    def wrapper(*args, **kwargs):
+        """A wrapper function"""
+        # Extend some capabilities of func
+        func()
+    wrapper.__name__ = func.__name__
+    wrapper.__doc__ = func.__doc__
+    return wrapper
+
+@a_decorator
+def first_function():
+    """This is docstring for first function"""
+    print("first function")
+
+@a_decorator
+def second_function(a):
+    """This is docstring for second function"""
+    print("second function")
+
+print(first_function.__name__)
+print(first_function.__doc__)
+print(second_function.__name__)
+print(second_function.__doc__)
