@@ -407,3 +407,86 @@ print(first_function.__name__)
 print(first_function.__doc__)
 print(second_function.__name__)
 print(second_function.__doc__)
+
+# GENERATORS [29/SEP/2026]
+"""
+A generator in Python is a special type of iterator that produces values 
+one at a time, on demand, using yield, instead of creating and storing all 
+the values in memory at once.
+"""
+def get_numbers():
+    yield 1
+    yield 2
+    yield 3
+    yield 4
+    yield 5
+
+numbers = get_numbers()
+print(numbers)
+print(next(numbers))
+print(next(numbers))
+print(next(numbers))
+
+# FOR LOOP
+def get_numbers():
+    yield 1
+    yield 2
+    yield 3
+    yield 4
+    yield 5
+
+numbers = get_numbers()
+for number in numbers:
+    print(number)
+
+# FOR EACH APPLICANT
+def get_applicants():
+    yield {"income": 100000, "debt": 30000}
+    yield {"income": 80000, "debt": 40000}
+    yield {"income": 150000, "debt": 20000}
+
+
+for applicant in get_applicants():
+    print(applicant)
+
+# FOR EACH DEBT RATIO
+def get_applicants():
+    yield {"income": 100000, "debt": 30000}
+    yield {"income": 80000, "debt": 40000}
+    yield {"income": 150000, "debt": 20000}
+    yield {"income": 1299829, "debt": 278363}
+    yield {"income": 245613675, "debt": 267253}
+
+for i, applicant in enumerate(get_applicants(), start=1):
+    ratio = applicant["debt"] / applicant["income"]
+    print(f"The debt ratio for applicant {i}: {ratio}")
+
+# Generator vs List
+# list
+def get_numbers():
+    return [i for i in range(1, 1000001)]
+# get_numbers()
+
+# Generator
+def get_numbers():
+    for i in range(1,1000001):
+        yield i
+
+numbers = get_numbers()
+
+for number in numbers:
+    if number == 999:
+        print(number)
+        break
+
+# mini exercise
+def get_applicants():
+    yield {"income": 100000, "debt": 30000}
+    yield {"income": 80000, "debt": 40000}
+    yield {"income": 150000, "debt": 20000}
+
+data = get_applicants()
+
+for i, applicant in enumerate(data, start=1):
+    debt_ratio = applicant["debt"]/applicant["income"]
+    print(f"Applicant {i}: debt ratio = {debt_ratio}")
