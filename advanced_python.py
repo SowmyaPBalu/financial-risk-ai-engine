@@ -490,3 +490,105 @@ data = get_applicants()
 for i, applicant in enumerate(data, start=1):
     debt_ratio = applicant["debt"]/applicant["income"]
     print(f"Applicant {i}: debt ratio = {debt_ratio}")
+
+# 03/OCT/2026
+# Context managers - with
+"""
+Context Manager — definition
+
+A context manager in Python is an object that manages the setup 
+and cleanup of a resource or operation automatically, using the with 
+statement.
+
+-Database connections
+-Network connections
+-Locks
+-Transactions
+-Temporary resources
+"""
+with open("sample.txt", "r") as file:
+    data = file.read()
+
+print(data)
+
+# A context manager follows two special methods:
+#  __enter__() & _exit__()
+with open("sample.txt", "r") as file:
+    data = file.read()
+    print(data)
+    raise ValueError("Something went wrong")
+
+"""
+exc_type - what type of error
+exc_value - error message
+traceback - Where did it happen
+"""
+class MyContext:
+    def __enter__(self):
+        print("Entering context")
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        print("Exiting context")
+
+# with MyContext():
+#     print("Inside context")
+with MyContext():
+    print("Inside context")
+    raise ValueError("Test error")
+
+# LOGGING
+import logging
+
+# "Show INFO-level messages and anything more serious."
+logging.basicConfig(level=logging.INFO)
+# "Record an informational message."
+logging.info("Risk calculation started")
+
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    filename="risk_engine.log",
+                    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+                    )
+logger = logging.getLogger("risk_engine")
+
+logging.debug("Debug message")
+logging.info("Risk calculation started")
+logging.warning("High debt ratio detected")
+logging.error("Risk calculation failed")
+logging.critical("Risk engine unavailable")
+
+logger.debug("Debug message")
+logger.info("Risk calculation started")
+logger.warning("High debt ratio detected")
+logger.error("Risk calculation failed")
+logger.critical("Risk engine unavailable")
+
+def calculate_risk_score(income: float, debt: float) -> float:
+    logger.info("Risk calculation started")
+
+    if income <= 0:
+        logger.error("Invalid income: income must be greater than zero")
+        raise ValueError("Income must be greater than zero")
+
+    if debt < 0:
+        logger.error("Invalid debt: debt cannot be negative")
+        raise ValueError("Debt cannot be negative")
+
+    debt_ratio = debt / income
+
+    logger.debug(f"Calculated debt ratio: {debt_ratio}")
+
+    logger.info("Risk calculation completed")
+
+    return debt_ratio
+
+result = calculate_risk_score(100000, 30000)
+print(f"Risk score: {result}")
+
+try:
+    result = calculate_risk_score(0, 30000)
+    print(f"Risk score: {result}")
+except ValueError:
+    logger.exception("Risk calculation failed")
+
