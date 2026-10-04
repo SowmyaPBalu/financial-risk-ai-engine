@@ -7,3 +7,12 @@ def calculate_risk_score(income: float, debt: float) -> float:
 
     debt_ratio = debt / income
     return debt_ratio
+
+# Mocking
+class CreditDatabase:
+    def get_score(self, customer_id: str) -> int:
+        # Pretend this queries a real database
+        return 750
+    
+def get_credit_score(customer_id: str, database: CreditDatabase) -> int:
+    return database.get_score(customer_id)
