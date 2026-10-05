@@ -592,3 +592,184 @@ try:
 except ValueError:
     logger.exception("Risk calculation failed")
 
+# Async function:
+# Helps during wait times
+
+"""
+Async concurrency is useful when your program spends time waiting for I/O.
+
+API calls
+database queries
+LLM/API calls
+document retrieval
+network requests
+calling multiple services
+
+-async def — define a coroutine
+-await — pause while waiting for an I/O operation
+-asyncio.run() — start the async program
+-asyncio.gather() — run multiple async operations concurrently
+
+"""
+import asyncio
+
+async def fetch_customer():
+    print("Fetching customer...")
+    await asyncio.sleep(2)
+    print("Customer received")
+
+asyncio.run(fetch_customer())
+
+# asyncio.gather() lets us wait for them concurrently.
+
+async def fetch_customer():
+    print("Fetching customer...")
+    await asyncio.sleep(2)
+    print("Customer received")
+
+async def fetch_credit_score():
+    print("Fetching credit score...")
+    await asyncio.sleep(2)
+    print("Credit score received")
+
+async def main():
+    await asyncio.gather(
+        fetch_customer(),
+        fetch_credit_score()
+    )
+
+# It waited same 2 secondsfor both functions and not 4 seconds
+asyncio.run(main())
+
+# API calls
+# requests → normal/synchronous API calls
+# httpx → synchronous and asynchronous API calls
+import requests
+
+response = requests.get("https://jsonplaceholder.typicode.com/users/1",
+                        timeout=5)
+
+print(response.status_code)
+"""
+Code	Meaning
+200	    OK / successful
+201	    Created
+400	    Bad request
+401	    Unauthorized
+403	    Forbidden
+404	    Not found
+500	    Server error
+"""
+print(response.json())
+
+data = response.json()
+print(data["name"])
+print(data["email"])
+
+# Exception handling
+try:
+    response = requests.get(
+        "https://jsonplaceholder.typicode.com/users/1",
+        timeout=5
+    )
+    response.raise_for_status()
+    data = response.json()
+    print(data)
+
+except requests.exceptions.RequestException as e:
+    print(f"API request failed: {e}")
+
+# Retries
+import time
+for attempt in range(3):
+    try:
+        response = requests.get(
+            "https://jsonplaceholder.typicode.com/users/1",
+            timeout=5
+        )
+        response.raise_for_status()
+        data = response.json()
+        print(data)
+        break
+
+    except requests.exceptions.RequestException as e:
+        print(f"Attempt {attempt + 1} failed: {e}")
+
+        if attempt < 2:
+            wait_time = 2 ** attempt
+            print(f"Retrying in {wait_time} seconds...")
+            time.sleep(wait_time)
+        else:
+            print("All attempts failed.")
+
+def fetch_data(url: str, max_retries: int = 3) -> dict:
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+            return response.json()
+
+        except requests.exceptions.RequestException as e:
+            print(f"Attempt {attempt + 1} failed: {e}")
+
+            if attempt < max_retries - 1:
+                wait_time = 2 ** attempt
+                print(f"Retrying in {wait_time} seconds...")
+                time.sleep(wait_time)
+            else:
+                raise
+
+    raise RuntimeError("Unexpected retry loop exit")
+
+data = fetch_data("https://jsonplaceholder.typicode.com/users/1")
+print(data["name"])
+
+# hhtpx api call for async calls
+import asyncio
+import httpx
+
+async def fetch_user():
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            "https://jsonplaceholder.typicode.com/users/1",
+            timeout=5
+        )
+
+        response.raise_for_status()
+
+        return response.json()
+
+async def main():
+    user = await fetch_user()
+    print(user["name"])
+
+asyncio.run(main())
+
+# It allows the three independent API requests to wait concurrently, rather than doing:
+# request 1 → wait → request 2 → wait → request 3
+"""
+request 1 ─┐
+request 2 ─┼─→ wait concurrently → results
+request 3 ─┘
+"""
+async def fetch_user(user_id: int):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            f"https://jsonplaceholder.typicode.com/users/{user_id}",
+            timeout=5
+        )
+
+        response.raise_for_status()
+        return response.json()
+
+async def main():
+    users = await asyncio.gather(
+        fetch_user(1),
+        fetch_user(2),
+        fetch_user(3)
+    )
+
+    for user in users:
+        print(user["name"])
+
+asyncio.run(main())
