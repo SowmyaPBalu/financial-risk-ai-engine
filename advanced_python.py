@@ -773,3 +773,155 @@ async def main():
         print(user["name"])
 
 asyncio.run(main())
+
+# NUMPY - NumPy is a Python library designed for fast numerical computation.
+# NumPy arrays are designed for numerical operations and work very efficiently with large datasets.
+
+import numpy as np
+
+income = np.array([100000, 80000, 120000, 95000])
+
+print(f"numpy array: {income}")
+# means 4 elements in one dimension.
+print(income.shape)
+# means this is a 1-dimensional array.
+print(income.ndim)
+# means there are 4 total elements.
+print(income.size)
+# data type
+print(income.dtype)
+
+# Sample 2D
+applicants = np.array([
+    [100000, 30000],
+    [80000, 40000],
+    [120000, 20000]
+])
+
+print(applicants)
+# 3 rows × 2 columns
+print(applicants.shape)
+#  2D
+print(applicants.ndim)
+# 3 × 2 = 6 values
+print(applicants.size)
+
+# Indexing
+"""
+             Income   Debt
+             col 0    col 1
+
+row 0       100000   30000
+row 1        80000   40000
+row 2       120000   20000
+"""
+# 100000
+print(applicants[0, 0])
+# 40000
+print(applicants[1, 1])
+# [100000  30000], similar to [0,:] - picks up row 0
+print(applicants[0])
+# [100000  80000 120000] - pick up col 0
+print(applicants[:, 0])
+
+# SLICING
+# array[rows, columns]
+# Slicing lets us select multiple rows or columns.
+# Get the first two rows:
+print(applicants[0:2])
+# Get the first two rows and only the income column:
+print(applicants[0:2, 0])
+# Get all rows and both columns:
+print(applicants[:, :])
+# last two rows:
+print(applicants[1:])
+
+# NumPy Vectorization
+# eliminates the need for for loop, does computation on its own
+income = np.array([100000, 80000, 120000])
+result = income * 0.1
+print(result)
+print(f" adding 5k: {income + 5000}")
+print(f"multiply with 2: {income * 2}")
+print(f"divide with 1k: {income / 1000}")
+
+# classic example
+applicants_4d = np.array([
+    [100000, 30000],
+    [80000, 40000],
+    [120000, 20000],
+    [90000, 45000]
+])
+
+income = applicants_4d[:, 0]
+debt = applicants_4d[:, 1]
+
+debt_ratio = debt / income
+
+print(debt_ratio)
+
+# Aggregations
+print(f"Sum: {debt_ratio.sum()}")
+print(f"Mean/Avg: {debt_ratio.mean()}")
+print(f"Min: {debt_ratio.min()}")
+print(f"Max: {debt_ratio.max()}")
+
+# Boolean Filtering
+high_risk = debt_ratio > 0.4
+print(high_risk)
+# Give me only the values where the mask is True.”
+debt_ratio[high_risk]
+
+income[debt_ratio>0.4]
+
+# Broadcasting
+"""
+Broadcasting means NumPy can perform an operation between arrays of different shapes by automatically matching the smaller value/array across the larger one.
+Broadcasting is NumPy's mechanism for performing operations between arrays of compatible shapes.
+
+income:      [100000   80000   120000]
+adjustment:  [  5000   10000     2000]
+             ─────────────────────────
+result:      [105000   90000   122000]
+
+"""
+income = np.array([100000, 80000, 120000])
+bonus = 5000
+
+print(income + bonus)
+
+# matches its corresponding positions automatically
+adjustment = np.array([5000, 10000, 2000])
+print(income + adjustment)
+
+# basic matrix operations
+A = np.array([
+    [1, 2],
+    [3, 4]
+])
+
+B = np.array([
+    [5, 6],
+    [7, 8]
+])
+
+print(A @ B)
+
+#Mini excercise
+applicants = np.array([
+    [100000, 50000],
+    [80000, 40000],
+    [120000, 20000],
+    [90000, 4500]
+])
+
+debt_4d = applicants[:,1]
+income_4d = applicants[:,0]
+
+debt_ratio_4d = debt_4d/income_4d
+
+print(f"income: {applicants[:,0]}")
+print(f"debt: {applicants[:,1]}")
+print(f"debt ratio: {debt_ratio_4d}")
+print(f"applicants with debt ratio > 40%: {applicants[debt_ratio_4d > 0.4]}")
+print(f"applicants with income having debt ratio > 40%: {income_4d[debt_ratio_4d > 0.4]}")
